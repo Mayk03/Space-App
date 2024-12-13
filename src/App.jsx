@@ -26,8 +26,8 @@ const AppContainer = styled.div`
 
 const MainContainer = styled.main`
 
-display: flex;
-gap: 24px;
+  display: flex;
+  gap: 24px;
 `
 
 const ContenidoGaleria = styled.section`
@@ -43,7 +43,54 @@ const App = () => {
   const [fotosDeGaleria, setFotosDeGaleria] = useState(fotos)
   const [fotoSeleccionada, setFotoSeleccionada] = useState(null)
   const [busqueda, setBusqueda] = useState("");
-  const [fotosFiltradas, setFotosFiltradas] = useState(fotos);
+  const [fotosFiltradasPorBusqueda, setFotosFiltradasPorBusqueda] = useState(fotos);
+  const [fotosFiltradasPorTag, setFotosFiltradasPorTag] = useState(fotos);
+  const [tagSeleccionado, setTagSeleccionado] = useState(0);
+
+
+  const normalizeText = (text) => {
+    return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  };
+
+  useEffect(() => {
+    let resultados = fotosDeGaleria;
+
+    if (busqueda.trim() !== "") {
+      const busquedaNormalizada = normalizeText(busqueda);
+      resultados = resultados.filter((foto) =>
+        normalizeText(foto.titulo).includes(busquedaNormalizada)
+      );
+    }
+
+    setFotosFiltradasPorBusqueda(resultados);
+  }, [busqueda, fotosDeGaleria]);
+
+  useEffect(() => {
+    let resultados = fotosDeGaleria;
+
+    if (tagSeleccionado !== 0) {
+      resultados = resultados.filter((foto) =>
+        foto.tagId === tagSeleccionado
+      );
+    }
+
+    setFotosFiltradasPorTag(resultados);
+  }, [tagSeleccionado, fotosDeGaleria]);
+
+  const obtenerFotosFinales = () => {
+    if (busqueda.trim() === "" && tagSeleccionado === 0) {
+      return fotosDeGaleria;
+    }
+
+    const idsFiltradosPorBusqueda = new Set(fotosFiltradasPorBusqueda.map(foto => foto.id));
+    const idsFiltradosPorTag = new Set(fotosFiltradasPorTag.map(foto => foto.id));
+
+    const idsComunes = [...idsFiltradosPorBusqueda].filter(id => idsFiltradosPorTag.has(id));
+
+    return fotosDeGaleria.filter(foto => idsComunes.includes(foto.id));
+  };
+
+  const fotosFinales = obtenerFotosFinales();
 
 
   const alAlterarFavorito = (foto) => {
@@ -65,17 +112,6 @@ const App = () => {
     );
   }
 
-  useEffect(() => {
-    if (busqueda.trim() === "") {
-      setFotosFiltradas(fotosDeGaleria);
-    } else {
-      const resultados = fotosDeGaleria.filter((foto) =>
-        foto.titulo.toLowerCase().includes(busqueda.toLowerCase())
-      );
-      setFotosFiltradas(resultados);
-    }
-  }, [busqueda, fotosDeGaleria]);
-
   return (
     <>
       <FondoGradiente>
@@ -87,9 +123,11 @@ const App = () => {
             <ContenidoGaleria>
               <Banner texto="La galeria más completa de fotos del espacio" 
               backgroundImage={banner} />
-              <Galeria alSeleccionarFoto={(foto) => setFotoSeleccionada(foto)}
-                fotos={fotosFiltradas}
-                alAlterarFavorito={alAlterarFavorito} />
+              <Galeria 
+                alSeleccionarFoto={(foto) => setFotoSeleccionada(foto)}
+                fotos={fotosFinales}
+                alAlterarFavorito={alAlterarFavorito} 
+                setTagSeleccionado={setTagSeleccionado} />
             </ContenidoGaleria>
           </MainContainer>
         </AppContainer>

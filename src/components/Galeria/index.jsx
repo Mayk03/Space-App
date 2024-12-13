@@ -21,26 +21,28 @@ const ImagenesContainer = styled.section`
     gap: 24px;
 `
 
-const Galeria = ({fotos= [], alSeleccionarFoto, alAlterarFavorito}) => {
-  return (
-    <>
-        <Tags />
+const Galeria = ({ fotos = [], alSeleccionarFoto, alAlterarFavorito, setTagSeleccionado }) => {
+    return (
+      <>
+        <Tags setTagSeleccionado={setTagSeleccionado} />
         <GaleriaContainer>
-            <SeccionFluida>
-                <Titulo>Navegue por la galería</Titulo>
-                <ImagenesContainer>
-                        {fotos.map(foto => <Imagen
-                        alAlterarFavorito={alAlterarFavorito}
-                        alSolicitarZoom={alSeleccionarFoto}
-                            key={foto.id}
-                            foto={foto} />)
-                        }
-                </ImagenesContainer>
-            </SeccionFluida>
-            <Populares />
+          <SeccionFluida>
+            <Titulo>Navegue por la galería</Titulo>
+            <ImagenesContainer>
+              {fotos.map(foto => (
+                <Imagen
+                  alAlterarFavorito={alAlterarFavorito}
+                  alSolicitarZoom={alSeleccionarFoto}
+                  key={foto.id}
+                  foto={foto}
+                />
+              ))}
+            </ImagenesContainer>
+          </SeccionFluida>
+          <Populares />
         </GaleriaContainer>
-    </>
-  );
-}
+      </>
+    );
+  };
 
 export default Galeria;

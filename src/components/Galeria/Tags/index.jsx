@@ -1,3 +1,4 @@
+import React from 'react';
 import { styled } from 'styled-components';
 import tags from './tags.json'
 
@@ -35,13 +36,19 @@ const Div = styled.div`
     justify-content: end;
 `
 
-const Tags = () => {
-    return <TagsContainer>
+const Tags = ({ setTagSeleccionado }) => {
+    return (
+      <TagsContainer>
         <TagTitulo>Busque por tags:</TagTitulo>
         <Div>
-            {tags.map(tag => <Tag key={tag.id}>{tag.titulo}</Tag>)}
+          {tags.map(tag => (
+            <Tag key={tag.id} onClick={() => setTagSeleccionado(tag.id)}>
+              {tag.titulo}
+            </Tag>
+          ))}
         </Div>
-    </TagsContainer>
-}
+      </TagsContainer>
+    );
+  };
 
-export default Tags
+export default Tags;
