@@ -36,19 +36,13 @@ const Div = styled.div`
     justify-content: end;
 `
 
-const Tags = ({ setTagSeleccionado }) => {
-    return (
-      <TagsContainer>
-        <TagTitulo>Busque por tags:</TagTitulo>
-        <Div>
-          {tags.map(tag => (
-            <Tag key={tag.id} onClick={() => setTagSeleccionado(tag.id)}>
-              {tag.titulo}
-            </Tag>
-          ))}
-        </Div>
-      </TagsContainer>
-    );
-  };
+const Tags = () => {
+  return <TagsContainer>
+    <TagTitulo>Busque por tags:</TagTitulo>
+    <Div>
+      {tags.map(tag => <Tag key={tag.id}>{tag.titulo}</Tag>)}
+    </Div>
+  </TagsContainer>
+};
 
 export default Tags;
