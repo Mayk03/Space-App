@@ -51,7 +51,7 @@ const GlobalContextProvider = ({ children }) => {
 
   useEffect(() => {
     const getData = async () => {
-      const res = await fetch("http://localhost:3000/fotos");
+      const res = await fetch("https://api-fotos.glitch.me/fotos");
       const data = await res.json();
       dispatch({ type: "SET_FOTOS_DE_GALERIA", payload: data });
     };
