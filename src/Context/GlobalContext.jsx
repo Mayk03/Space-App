@@ -7,6 +7,7 @@ const initialState = {
   fotosDeGaleria: [],
   fotoSeleccionada: null,
   modalAbierto: false,
+  tagsSeleccionados: [],
 };
 
 const reduce = (state, action) => {
@@ -17,36 +18,53 @@ const reduce = (state, action) => {
       return { ...state, fotosDeGaleria: action.payload };
     case "SET_FOTO_SELECCIONADA":
       return {
-        ...state, 
+        ...state,
         fotoSeleccionada: action.payload,
-        modalAbierto: action.payload != null ? true : false
+        modalAbierto: action.payload != null ? true : false,
       };
     case "ALTERAR_FAVORITO":
-      const fotosDeGaleria = state.fotosDeGaleria.map(fotoDeGaleria => {
+      const fotosDeGaleria = state.fotosDeGaleria.map((fotoDeGaleria) => {
         return {
           ...fotoDeGaleria,
-          favorita: fotoDeGaleria.id === action.payload.id ? !action.payload.favorita : fotoDeGaleria.favorita
+          favorita:
+            fotoDeGaleria.id === action.payload.id
+              ? !action.payload.favorita
+              : fotoDeGaleria.favorita,
         };
-      })
-    if (action.payload.id === state.fotoSeleccionada?.id) {
-      return {...state, 
-        fotosDeGaleria: fotosDeGaleria,
-        fotoSeleccionada: {
-          ...state.fotoSeleccionada, favorita: !state.fotoSeleccionada.favorita
-        }
+      });
+      if (action.payload.id === state.fotoSeleccionada?.id) {
+        return {
+          ...state,
+          fotosDeGaleria: fotosDeGaleria,
+          fotoSeleccionada: {
+            ...state.fotoSeleccionada,
+            favorita: !state.fotoSeleccionada.favorita,
+          },
+        };
+      } else {
+        return {
+          ...state,
+          fotosDeGaleria: fotosDeGaleria,
+        };
       }
-    }else{
+    case "TAGS_SELECCIONADOS":
+      if (action.payload.length === 0) {
+        return {
+          ...state,
+          tagsSeleccionados: [],
+        };
+      }
       return {
-        ...state, fotosDeGaleria: fotosDeGaleria
-      }
-    };
+        ...state,
+        tagsSeleccionados: action.payload,
+      };
+
     default:
       return state;
   }
 };
 
 const GlobalContextProvider = ({ children }) => {
-
   const [state, dispatch] = useReducer(reduce, initialState);
 
   useEffect(() => {
@@ -59,8 +77,6 @@ const GlobalContextProvider = ({ children }) => {
     setTimeout(() => getData(), 5000);
   }, []);
 
-
-  
   return (
     <GlobalContext.Provider value={{ state, dispatch }}>
       {children}
